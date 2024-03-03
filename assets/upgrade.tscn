@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://bnxjpcgt2pm33"]
+
+[ext_resource type="Texture2D" uid="uid://cbkynv5goedg0" path="res://textures/upgrade.png" id="1_bxhy3"]
+[ext_resource type="Script" path="res://assets/upgrade.gd" id="1_mjd2w"]
+[ext_resource type="Script" path="res://resources/double_jump.gd" id="2_lrqcq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dwdrl"]
+size = Vector2(16, 16)
+
+[node name="upgrade" type="StaticBody2D"]
+script = ExtResource("1_mjd2w")
+upgrade = ExtResource("2_lrqcq")
+
+[node name="sprite" type="Sprite2D" parent="."]
+modulate = Color(0.490196, 1, 0.815686, 1)
+texture = ExtResource("1_bxhy3")
+
+[node name="hitBox" type="Area2D" parent="."]
+light_mask = 0
+visibility_layer = 2
+
+[node name="collision" type="CollisionShape2D" parent="hitBox"]
+light_mask = 0
+visibility_layer = 2
+shape = SubResource("RectangleShape2D_dwdrl")
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="hitBox" to="." method="_on_hit_box_body_entered"]
