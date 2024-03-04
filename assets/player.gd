@@ -25,9 +25,10 @@ var can_move = true
 
 @onready var timer = $cooldown
 @onready var dash_time = $dashingTime
-@onready var dash_meter = $camera/dash_meter
+@export var dash_meter : TextureProgressBar
 
-
+@export var camera : Camera2D
+@export var hp_sprite : Sprite2D
 
 signal dash_added
 
@@ -60,6 +61,7 @@ func _physics_process(delta):
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var direction = Input.get_axis("ui_left", "ui_right")
 	
+	
 	if dash:
 		if Input.is_action_just_pressed('dash') and can_dash and direction != 0: 
 			dashing = true
@@ -72,7 +74,7 @@ func _physics_process(delta):
 		print(timer.time_left, " - time left")
 		dash_meter.value = 100 - timer.time_left * 100
 		print(dash_meter.value)
-		
+	
 	if taking_damage:
 		velocity.x = damage_side * -1 * knockback_power
 	if can_move:
@@ -123,7 +125,7 @@ func took_damage(body):
 	hp -= 1
 	if hp == 0:
 		get_tree().quit()
-	%hp.frame_coords.x += 1
+	hp_sprite.frame_coords.x += 1
 	modulate = Color(1,0,0)
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, 'modulate', Color(1,1,1), 0.25)

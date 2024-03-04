@@ -1,0 +1,73 @@
+[gd_scene load_steps=8 format=3 uid="uid://cpco4qpyxj7d2"]
+
+[ext_resource type="Texture2D" uid="uid://ddutitvwmxl87" path="res://textures/flyingSmth.png" id="1_ntdg0"]
+[ext_resource type="Script" path="res://assets/flying_thing.gd" id="1_s1j37"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_caqxy"]
+size = Vector2(8, 8)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xp8ti"]
+radius = 7.0
+height = 14.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vjrcf"]
+size = Vector2(12, 2)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jd244"]
+size = Vector2(96, 96)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jh2ro"]
+size = Vector2(192, 176)
+
+[node name="flyingThing" type="CharacterBody2D" node_paths=PackedStringArray("navigation") groups=["enemy"]]
+collision_layer = 9
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_s1j37")
+navigation = NodePath("NavigationAgent2D")
+
+[node name="hitBox" type="ShapeCast2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_caqxy")
+target_position = Vector2(0, -5)
+
+[node name="sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_ntdg0")
+
+[node name="collisionAttack" type="CollisionShape2D" parent="." groups=["enemy"]]
+shape = SubResource("CapsuleShape2D_xp8ti")
+
+[node name="collisionHead" type="CollisionShape2D" parent="."]
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_vjrcf")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+navigation_layers = 9
+path_postprocessing = 1
+avoidance_enabled = true
+radius = 20.0
+debug_enabled = true
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[node name="detection" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="detectCol" type="CollisionShape2D" parent="detection"]
+visibility_layer = 3
+shape = SubResource("RectangleShape2D_jd244")
+
+[node name="lastDetect" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="collisionDetect" type="CollisionShape2D" parent="lastDetect"]
+shape = SubResource("RectangleShape2D_jh2ro")
+
+[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="body_entered" from="detection" to="." method="_on_detection_body_entered"]
+[connection signal="body_exited" from="lastDetect" to="." method="_on_last_detect_body_exited"]
